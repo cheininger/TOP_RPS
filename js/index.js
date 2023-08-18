@@ -1,3 +1,50 @@
+const body = document.querySelector("body");
+const buttons = document.querySelectorAll(".button-container > button");
+const scoreDiv = document.querySelector("div#score");
+const roundMessage = document.querySelector("p.round-message");
+const paraPlayerScore = document.querySelector("p.player-score");
+const paraComputerScore = document.querySelector("p.computer-score");
+const endMessage = document.createElement("p");
+
+let playerScore = 0;
+let computerScore = 0;
+
+buttons.forEach((button) => {
+  button.addEventListener("click", () => {
+    let result = "";
+    result = playRound(
+      (playerSelection = button.id),
+      (computerSelection = getComputerChoice())
+    );
+
+    if (result === "player") {
+      playerScore++;
+      paraPlayerScore.textContent = `Player Score: ${playerScore}`;
+    } else if (result === "PC") {
+      computerScore++;
+      paraComputerScore.textContent = `Computer Score: ${computerScore}`;
+    }
+
+    if (playerScore === 5) {
+      endMessage.textContent = "Congratulations! You won the First-to-5!!!";
+      scoreDiv.appendChild(endMessage);
+      const resetButton = document.createElement("button");
+      resetButton.setAttribute("id", "reset");
+      resetButton.textContent = "Reset";
+      body.appendChild(resetButton);
+      resetButton.addEventListener("click", reset);
+    } else if (computerScore === 5) {
+      endMessage.textContent = "Tough luck. The PC won the First-to-5!";
+      scoreDiv.appendChild(endMessage);
+      const resetButton = document.createElement("button");
+      resetButton.setAttribute("id", "reset");
+      resetButton.textContent = "Reset";
+      body.appendChild(resetButton);
+      resetButton.addEventListener("click", reset);
+    }
+  });
+});
+
 function getComputerChoice() {
   let randomNumber = Math.random();
   let computerSelection;
@@ -13,77 +60,51 @@ function getComputerChoice() {
   return computerSelection;
 }
 
-function getPlayerChoice() {
-  let playerSelection = prompt("Rock, Paper or Scissors? What's your play?!");
-
-  playerSelection = playerSelection.toLowerCase();
-
-  return playerSelection;
-}
-
 function playRound(playerSelection, computerSelection) {
   if (playerSelection === "rock") {
     if (computerSelection === "rock") {
-      alert("It's a tie! PC and you both picked Rock!");
-      return "tie";
+      roundMessage.textContent = "It's a tie! PC and you both picked Rock!";
     } else if (computerSelection === "paper") {
-      alert("You lose! PC' Paper beats your Rock!");
+      roundMessage.textContent = "You lose! PC' Paper beats your Rock!";
       return "PC";
     } else if (computerSelection === "scissors") {
-      alert("You win! Your Rock beats PC's Scissors!");
+      roundMessage.textContent = "You win! Your Rock beats PC's Scissors!";
       return "player";
     }
   } else if (playerSelection === "paper") {
     if (computerSelection === "rock") {
-      alert("You win! Your Paper beats PC's Rock!");
+      roundMessage.textContent = "You win! Your Paper beats PC's Rock!";
       return "player";
     } else if (computerSelection === "paper") {
-      alert("It's a tie! PC and you both picked Paper!");
-      return "tie";
+      roundMessage.textContent = "It's a tie! PC and you both picked Paper!";
     } else if (computerSelection === "scissors") {
-      alert("You lose! PC's Scissors beats your Paper!");
+      roundMessage.textContent = "You lose! PC's Scissors beats your Paper!";
       return "PC";
     }
   } else if (playerSelection === "scissors") {
     if (computerSelection === "rock") {
-      alert("You lose! PC's Rock beats your Scissors");
+      roundMessage.textContent = "You lose! PC's Rock beats your Scissors";
       return "PC";
     } else if (computerSelection === "paper") {
-      alert("You win! Your Scissors beats PC's Paper!");
+      roundMessage.textContent = "You win! Your Scissors beats PC's Paper!";
       return "player";
     } else if (computerSelection === "scissors") {
-      alert("It's a tie! PC and you both picked Scissors!");
-      return "tie";
+      roundMessage.textContent = "It's a tie! PC and you both picked Scissors!";
     }
   }
 }
 
-function game() {
-  let computerSelection;
-  let playerSelection;
-  let playerScore = 0;
-  let computerScore = 0;
+function reset() {
+  const resetButton = document.querySelector("button#reset");
 
-  for (let i = 0; i < 5; i++) {
-    computerSelection = getComputerChoice();
-    playerSelection = getPlayerChoice();
+  playerScore = 0;
+  computerScore = 0;
 
-    result = playRound(playerSelection, computerSelection);
+  paraPlayerScore.textContent = `Player Score: ${playerScore}`;
+  paraComputerScore.textContent = `Computer Score: ${computerScore}`;
 
-    if (result === "player") {
-      playerScore++;
-    } else if (result === "PC") {
-      computerScore++;
-    }
-  }
+  scoreDiv.removeChild(endMessage);
+  roundMessage.textContent = "";
 
-  if (playerScore > computerScore) {
-    alert("Congratulations! You won the Best of 5!");
-  } else if (playerScore < computerScore) {
-    alert("Sorry... The PC won the Best of 5. Better luck next time!");
-  } else if (playerScore == computerScore) {
-    alert("The Best of 5 did not result in a winner. Thanks for playing!");
-  }
+  body.removeChild(resetButton);
 }
-
-game();
